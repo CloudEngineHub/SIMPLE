@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SIMPLE &middot; Leaderboard</title>
+  <meta name="description" content="SIMPLE leaderboard: humanoid loco-manipulation policies ranked by overall success rate across six whole-body tasks and three domain-randomization levels." />
+  <meta name="color-scheme" content="dark light" />
+  <script>
+    // Set theme before paint to avoid a flash of the wrong theme.
+    (function () {
+      try {
+        var param = new URLSearchParams(location.search).get('theme');
+        if (param === 'light' || param === 'dark') {
+          localStorage.setItem('theme', param);
+        }
+        var saved = localStorage.getItem('theme');
+        var theme = saved || (window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
+        document.documentElement.setAttribute('data-theme', theme);
+      } catch (e) {
+        document.documentElement.setAttribute('data-theme', 'dark');
+      }
+    })();
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <!-- Ambient gradient glow background -->
+  <div class="bg-field" aria-hidden="true">
+    <span class="blob blob--pink"></span>
+    <span class="blob blob--purple"></span>
+    <span class="blob blob--cyan"></span>
+    <span class="blob blob--orange"></span>
+    <div class="grid-overlay"></div>
+  </div>
+
+  <!-- Navbar -->
+  <header class="nav glass" id="nav">
+    <a href="index.html#top" class="nav__brand">
+      <span class="logo-text"><span class="g-s">S</span><span class="g-i">I</span><span class="g-m">M</span><span class="g-p">P</span><span class="g-l">L</span><span class="g-e">E</span></span>
+    </a>
+    <nav class="nav__links" id="navLinks">
+
+    </nav>
+    <div class="nav__right">
+      <button class="theme-toggle" id="themeToggle" aria-label="Switch between light and dark theme" title="Toggle theme">
+        <svg class="ico-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/></svg>
+        <svg class="ico-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4.2" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="M12 2v2.4M12 19.6V22M4.2 4.2l1.7 1.7M18.1 18.1l1.7 1.7M2 12h2.4M19.6 12H22M4.2 19.8l1.7-1.7M18.1 5.9l1.7-1.7" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+      </button>
+      <button class="nav__toggle" id="navToggle" aria-label="Toggle navigation" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </header>
+
+  <main id="top">
+    <section class="section" id="leaderboard">
+      <div class="section__head reveal">
+        <span class="kicker">Benchmark</span>
+        <h2>Leaderboard</h2>
+        <p class="lede">Humanoid loco-manipulation policies ranked by <b>overall success rate</b> across six whole-body tasks, each evaluated under three domain-randomization levels (<b>L0 / L1 / L2</b>). Scores are the mean success rate (%) over 10 rollouts per task per level.</p>
+      </div>
+
+      <div class="stat-grid stat-grid--4 reveal">
+        <div class="stat glass">
+          <div class="stat__num">6</div>
+          <div class="stat__label">Tasks</div>
+        </div>
+        <div class="stat glass">
+          <div class="stat__num">3</div>
+          <div class="stat__label">DR levels</div>
+        </div>
+        <div class="stat glass">
+          <div class="stat__num" id="lbCount">9</div>
+          <div class="stat__label">Policies evaluated</div>
+        </div>
+        <div class="stat glass">
+          <div class="stat__num stat__num--text">Jun 2026</div>
+          <div class="stat__label">Last updated</div>
+        </div>
+      </div>
+
+      <div class="table-wrap glass reveal">
+        <table class="bench lb">
+          <thead>
+            <tr>
+              <th class="lb-rank">Rank</th>
+              <th class="sticky-col">Policy</th>
+              <th class="lb-type">Type</th>
+              <th class="lb-overall">Overall</th>
+              <th class="lb-num">L0</th>
+              <th class="lb-num">L1</th>
+              <th class="lb-num">L2</th>
+            </tr>
+          </thead>
+          <tbody id="lbBody"><!-- rows injected by leaderboard.js --></tbody>
+        </table>
+      </div>
+
+      <p class="legend reveal">
+        <span class="lg lg--best">Top 3</span>
+        <span class="lg-sep"></span>
+        <b>Overall</b> = mean success rate across all six tasks and three levels. <b>L0 / L1 / L2</b> = mean success rate at each domain-randomization level. Higher is better.
+      </p>
+      <p class="note reveal">For the full per-task breakdown, see the <a class="inline-link" href="index.html#results">Results table</a> on the project page.</p>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="footer__inner glass">
+      <span class="logo-text logo-text--sm"><span class="g-s">S</span><span class="g-i">I</span><span class="g-m">M</span><span class="g-p">P</span><span class="g-l">L</span><span class="g-e">E</span></span>
+      <p>USC Physical Superintelligence (PSI) Lab &middot; CoRL 2026</p>
+      <a class="back-top" href="#top" aria-label="Back to top">Back to top &uarr;</a>
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+  <script src="leaderboard.js"></script>
+</body>
+</html>
