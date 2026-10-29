@@ -9,6 +9,7 @@ if TYPE_CHECKING:
     from simple.core.randomizer import RandomizerCfg
     from simple.datagen.subtask_spec import SubtaskSpec
 
+import copy
 from typing import Any
 
 import numpy as np
@@ -184,6 +185,16 @@ class G1WholebodyLocomotionPickBetweenTablesTaskTeleop(Task):
         self.success_criteria = self.metadata["success_criteria"] if "success_criteria" in self.metadata else 1.0
 
         self._robot = RobotRegistry.make(**self.robot_cfg, **kwargs)
+
+        # Spawn with zero arm qpos. g1_sonic's default arm init_qpos (raised
+        # forearms, since 36490d9) lets the fingers hit table1 while the WBC ramps
+        # to its default pose, pushing the robot 0.1-0.2m back from its spawn point.
+        # The data/checkpoints for this task were collected with zero arm init.
+        controller_cfg = copy.deepcopy(self._robot.controller_cfg)
+        controller_cfg.left_arm_cfg.init_qpos = [0.0] * 7
+        controller_cfg.right_arm_cfg.init_qpos = [0.0] * 7
+        self._robot.controller_cfg = controller_cfg
+        self._robot._controller = None
 
         # domain randomization confs
         # HACK THIS task is only in scene0
